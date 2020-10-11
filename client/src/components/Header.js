@@ -9,10 +9,10 @@ const {Header: HeaderAndt} = Layout
 const Header = () => {
     return (
         <HeaderAndt>
-            <Menu theme="dark" mode="horizontal">
-                <img className="menu-logo" src={reactLogo} alt="react"/>
-                <img className="menu-logo" src={postgresql} alt="postgresql"/>
-                <img className="menu-logo" src={reduxLogo} alt="redux"/>
+            <Menu theme="dark">
+                <img key="react" className="menu-logo" src={reactLogo} alt="react"/>
+                <img key="postgresql" className="menu-logo" src={postgresql} alt="postgresql"/>
+                <img key="redux" className="menu-logo" src={reduxLogo} alt="redux"/>
             </Menu>
         </HeaderAndt>
     );

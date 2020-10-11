@@ -57,6 +57,7 @@ function App({products, setProducts}) {
                         <Row gutter={[16, 16]}>
                             {products.map(item =>
                                 <CardItem
+                                    key={item.id}
                                     removeHandler={removeHandler}
                                     card={item}
                                 />
