@@ -55,7 +55,7 @@ function App({products, setProducts}) {
                         {isLoading && <Spin size="large"/>}
                         {(!isLoading && !products.length) && <Empty/>}
                         <Row gutter={[16, 16]}>
-                            {products.map(item =>
+                            {products.reverse().map(item =>
                                 <CardItem
                                     key={item.id}
                                     removeHandler={removeHandler}
@@ -74,7 +74,7 @@ function App({products, setProducts}) {
 
 const mapStateToProps = state => {
     return {
-        products: state.products,
+        products: state.storage.products,
     }
 }
 

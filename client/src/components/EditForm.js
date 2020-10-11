@@ -1,90 +1,129 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import API from "../utils/API";
-import {Form, Input, InputNumber, Button} from 'antd';
+import {Form, Button} from 'antd';
 import {setEditable, setIsOpen, setProducts} from "../store/actions/actions";
 import {openNotificationWithIcon} from "../utils/openNotification";
+import {reduxForm, Field} from "redux-form";
+import NewInput from "./NewInput";
 
 const layout = {
     labelCol: {span: 8},
     wrapperCol: {span: 16},
 };
 
-const validateMessages = {
-    required: '${label} is required!',
-    description: {
-        range: '${label} length should not be more ${max}',
-    },
-    image: {
-        range: '${label} length should not be more ${max}',
-    },
-};
+const validate = values => {
+    const errors = {}
+    if (!values.name) {
+        errors.name = 'Required'
+    } else if (!values.cost) {
+        errors.cost = 'Required'
+    } else if (!values.description) {
+        errors.description = 'Required'
+    } else if (!values.image) {
+        errors.image = 'Required'
+    } else if (values.name.length > 50) {
+        errors.name = 'No more than 50 characters'
+    } else if (values.description.length > 200) {
+        errors.description = 'No more than 200 characters'
+    } else if (!values.image.length > 200) {
+        errors.image = 'No more than 200 characters'
+    }
 
-const EditForm = ({editableItem, setEditableItem, setProducts, setIsOpen, products}) => {
+    return errors
+}
 
+let EditForm = ({
+                    setProducts,
+                    setIsOpen,
+                    setEditable,
+                    products,
+                    handleSubmit,
+                    error,
+                    resetForm,
+                }) => {
 
-    const onFinish = async (values) => {
-        const {id} = editableItem;
+    const addNewProduct = async (values) => {
+        const cost = parseFloat(values.cost)
 
-        if (!!id) {
-            const body = {id, ...values}
-            await API.patch('/good', body);
-        } else {
+        try {
             const isExist = products.find(item => item.name === values.name)
             if (isExist) {
                 openNotificationWithIcon('warning', 'This name already exists!')
                 return
             }
-            await API.post('/good', values)
+            await API.post('/good', {cost, ...values});
+
+        } catch (e) {
+            console.log(e)
         }
-        const fetched = await API.get('/goods');
-        setProducts(fetched.data)
-        setEditableItem({})
+    }
+
+    const editExistProduct = async (values) => {
+        const cost = parseFloat(values.cost);
+        try {
+            await API.patch('/good', {id: values.id, ...values, cost})
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    const onFinish = async () => {
+        const {data} = await API.get('/goods');
+        setProducts(data)
         setIsOpen(false)
+        setEditable({})
         openNotificationWithIcon('success')
+    }
+
+    const submit = async (values) => {
+
+        if (values.id) {
+            await editExistProduct({...values})
+        } else {
+            await addNewProduct({...values})
+        }
+        await onFinish()
+        resetForm()
     };
 
     return (
         <div>
             <Form
-                initialValues={editableItem}
                 {...layout}
                 name="nest-messages"
-                onFinish={onFinish}
-                validateMessages={validateMessages}
+                onFinish={handleSubmit(submit)}
             >
-                <Form.Item
+                <Field
+                    component={NewInput}
+                    required
                     name="name"
                     label="Name"
-                    rules={[{required: true}]}
-                >
-                    <Input/>
-                </Form.Item>
-                <Form.Item
+                    error={error}
+                />
+                <Field
+                    component={NewInput}
+                    required
                     name="description"
                     label="Description"
-                    rules={[{required: true}, {max: 300}]}
-                >
-                    <Input/>
-                </Form.Item>
-                <Form.Item
+                    error={error}
+                />
+                <Field
+                    component={NewInput}
+                    required
                     name="image"
                     label="Image link"
-                    initialValue={
-                        "https://avatarko.ru/img/kartinka/16/zhivotnye_kot_ochki_15785.jpg" || editableItem.image
-                    }
-                    help=""
-                    rules={[{required: true}, {max: 300}]}
-                >
-                    <Input/>
-                </Form.Item>
-                <Form.Item
+                    error={error}
+                />
+                <Field
+                    component={NewInput}
+                    required
                     name="cost"
                     label="Cost"
-                    rules={[{required: true}]}
-                >
-                    <InputNumber/>
-                </Form.Item>
+                    type="number"
+                    error={error}
+                />
+
                 <Form.Item wrapperCol={{...layout.wrapperCol}}>
                     <Button
                         type="primary"
@@ -100,17 +139,23 @@ const EditForm = ({editableItem, setEditableItem, setProducts, setIsOpen, produc
 
 const mapStateToProps = state => {
     return {
-        editableItem: state.editableItem,
-        products: state.products,
+        editableItem: state.storage.editableItem,
+        products: state.storage.products,
+        initialValues: state.storage.editableItem
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        setEditableItem: (item) => dispatch(setEditable(item)),
         setProducts: (products) => dispatch(setProducts(products)),
-        setIsOpen: (value) => dispatch(setIsOpen(value))
+        setIsOpen: (value) => dispatch(setIsOpen(value)),
+        setEditable: (value) => dispatch(setEditable(value)),
     }
 }
+
+EditForm = reduxForm({
+    form: 'modal',
+    validate
+})(EditForm)
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditForm);

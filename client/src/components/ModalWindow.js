@@ -22,7 +22,7 @@ const ModalWindow = ({isOpen, setIsOpen, setIsEditable}) => {
 };
 const mapStateToProps = state => {
     return {
-        isOpen: state.isOpen,
+        isOpen: state.storage.isOpen,
     }
 }
 

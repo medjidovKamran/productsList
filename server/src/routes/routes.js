@@ -34,6 +34,7 @@ router.post('/good', async (req, res) => {
 
 router.patch('/good', async (req, res) => {
     const {id, name, description, cost, image} = await req.body;
+
     try {
         const good = await Goods.findOne({where: {id}});
         if (!good) {
