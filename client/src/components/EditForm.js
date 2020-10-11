@@ -1,11 +1,13 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import API from "../utils/API";
-import {Form, Button} from 'antd';
+import {Form, Button, Typography} from 'antd';
 import {setEditable, setIsOpen, setProducts} from "../store/actions/actions";
 import {openNotificationWithIcon} from "../utils/openNotification";
 import {reduxForm, Field} from "redux-form";
 import NewInput from "./NewInput";
+
+const {Paragraph} = Typography
 
 const layout = {
     labelCol: {span: 8},
@@ -40,7 +42,6 @@ let EditForm = ({
                     products,
                     handleSubmit,
                     error,
-                    resetForm,
                 }) => {
 
     const addNewProduct = async (values) => {
@@ -84,7 +85,6 @@ let EditForm = ({
             await addNewProduct({...values})
         }
         await onFinish()
-        resetForm()
     };
 
     return (
@@ -114,7 +114,15 @@ let EditForm = ({
                     name="image"
                     label="Image link"
                     error={error}
-                />
+                >
+                    <Paragraph
+                        copyable={{
+                            text: "https://avatarko.ru/img/kartinka/16/zhivotnye_kot_ochki_15785.jpg"
+                        }}
+                    >
+                        example url image
+                    </Paragraph>
+                </Field>
                 <Field
                     component={NewInput}
                     required
@@ -137,21 +145,17 @@ let EditForm = ({
     );
 };
 
-const mapStateToProps = state => {
-    return {
-        editableItem: state.storage.editableItem,
-        products: state.storage.products,
-        initialValues: state.storage.editableItem
-    }
-}
+const mapStateToProps = state => ({
+    editableItem: state.storage.editableItem,
+    products: state.storage.products,
+    initialValues: state.storage.editableItem
+});
 
-const mapDispatchToProps = dispatch => {
-    return {
-        setProducts: (products) => dispatch(setProducts(products)),
-        setIsOpen: (value) => dispatch(setIsOpen(value)),
-        setEditable: (value) => dispatch(setEditable(value)),
-    }
-}
+const mapDispatchToProps = dispatch => ({
+    setProducts: (products) => dispatch(setProducts(products)),
+    setIsOpen: (value) => dispatch(setIsOpen(value)),
+    setEditable: (value) => dispatch(setEditable(value)),
+});
 
 EditForm = reduxForm({
     form: 'modal',

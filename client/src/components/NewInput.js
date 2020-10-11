@@ -19,6 +19,7 @@ const NewInput = ({
                       name,
                       meta: {touched, error},
                       required,
+                      children,
                       ...rest
                   }) => {
     return (
@@ -39,6 +40,7 @@ const NewInput = ({
                 ? <InputNumber {...rest.input} />
                 : <Input {...rest.input} />}
             {touched && error && <Text type="danger">{error}</Text>}
+            {children}
         </Form.Item>);
 };
 

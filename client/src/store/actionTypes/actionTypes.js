@@ -1,3 +1,4 @@
 export const SET_PRODUCTS = 'SET_PRODUCTS'
 export const SET_EDITABLE_ITEM = 'SET_EDITABLE_ITEM'
 export const SET_IS_OPEN = 'SET_IS_OPEN'
+export const SET_IS_LOADING = 'SET_IS_LOADING'

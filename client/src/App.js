@@ -1,32 +1,49 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {connect} from 'react-redux';
-import {setProducts} from "./store/actions/actions";
-import {Layout, Empty, Row, Spin} from "antd";
+import {setEditable, setIsLoading, setIsOpen, setProducts} from "./store/actions/actions";
+import API from "./utils/API";
 
 import Header from "./components/Header";
 import CardItem from "./components/CardItem";
 import ModalWindow from "./components/ModalWindow";
 import AddButton from "./components/AddButton";
-import API from "./utils/API";
+
 import {openNotificationWithIcon} from "./utils/openNotification";
+import {Layout, Empty, Row, Spin} from "antd";
 import './App.css'
 
 const {Content} = Layout;
 
-function App({products, setProducts}) {
-    const [isLoading, setIsLoading] = useState(false)
+function App({
+                 products,
+                 isLoading,
+                 setProducts,
+                 setIsLoading,
+                 setIsOpen,
+                 setEditableItem
+             }) {
 
     const removeHandler = async (card) => {
-        await API.delete('/good/', {
-            params: {id: card.id},
-        })
-        openNotificationWithIcon('success')
+        try {
+            await API.delete('/good/', {
+                params: {id: card.id},
+            })
+            openNotificationWithIcon('success')
 
-        const fetched = await API.get('/goods');
+            const fetched = await API.get('/goods');
 
-        setProducts(fetched.data)
+            setProducts(fetched.data)
+        } catch (e) {
+            console.log(e)
+            openNotificationWithIcon('error')
+        }
+
     }
 
+    const editHandler = (card) => {
+        setEditableItem(card)
+        setIsOpen(true)
+    }
 
     const getProducts = async () => {
         await setIsLoading(true)
@@ -41,9 +58,12 @@ function App({products, setProducts}) {
         await setIsLoading(false)
     }
 
-
     useEffect(() => {
+
         getProducts()
+        return () => {
+
+        }
     }, [])
 
     return (
@@ -58,12 +78,13 @@ function App({products, setProducts}) {
                             {products.reverse().map(item =>
                                 <CardItem
                                     key={item.id}
+                                    editHandler={editHandler}
                                     removeHandler={removeHandler}
                                     card={item}
                                 />
                             )}
                         </Row>
-                        {!isLoading && <AddButton/>}
+                        {!isLoading && <AddButton setIsOpen={setIsOpen}/>}
                     </div>
                 </Content>
                 <ModalWindow/>
@@ -72,16 +93,16 @@ function App({products, setProducts}) {
     );
 }
 
-const mapStateToProps = state => {
-    return {
-        products: state.storage.products,
-    }
-}
+const mapStateToProps = state => ({
+    products: state.storage.products,
+    isLoading: state.storage.isLoading
+})
 
-const mapDispatchToProps = dispatch => {
-    return {
-        setProducts: (products) => dispatch(setProducts(products)),
-    }
-}
+const mapDispatchToProps = dispatch => ({
+    setProducts: (products) => dispatch(setProducts(products)),
+    setIsLoading: (value) => dispatch(setIsLoading(value)),
+    setEditableItem: (item) => dispatch(setEditable(item)),
+    setIsOpen: (value) => dispatch(setIsOpen(value))
+})
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

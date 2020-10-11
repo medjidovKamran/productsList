@@ -1,12 +1,10 @@
 import React from 'react';
-import {connect} from "react-redux";
-import {setEditable, setIsOpen} from "../store/actions/actions";
 import {Tag, Card, Col} from 'antd';
 import {EditOutlined, DeleteOutlined, DollarCircleOutlined} from '@ant-design/icons';
 
 const {Meta} = Card;
 
-const CardItem = ({card, removeHandler, setEditableItem, setIsOpen}) => {
+const CardItem = ({card, removeHandler, editHandler}) => {
 
     const layout = {
         lg: 8,
@@ -29,10 +27,7 @@ const CardItem = ({card, removeHandler, setEditableItem, setIsOpen}) => {
                     </>
                 }
                 actions={[
-                    <EditOutlined onClick={() => {
-                        setEditableItem(card)
-                        setIsOpen(true)
-                    }} key="edit"/>,
+                    <EditOutlined onClick={() => editHandler(card)} key="edit"/>,
                     <DeleteOutlined onClick={() => removeHandler(card)} key="delete"/>
                 ]}
             >
@@ -48,11 +43,5 @@ const CardItem = ({card, removeHandler, setEditableItem, setIsOpen}) => {
     );
 };
 
-const mapDispatchToProps = dispatch => {
-    return {
-        setEditableItem: (item) => dispatch(setEditable(item)),
-        setIsOpen: (value) => dispatch(setIsOpen(value))
-    }
-}
 
-export default connect(null, mapDispatchToProps)(CardItem);
+export default CardItem;
