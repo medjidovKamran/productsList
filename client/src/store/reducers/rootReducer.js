@@ -17,12 +17,11 @@ export function rootReducer(state = initialState, action) {
             return {
                 ...state,
                 editableItem: action.payload,
-                isOpen: !state.isOpen,
             }
             case SET_IS_OPEN:
             return {
                 ...state,
-                isOpen: action.payload
+                isOpen: action.payload,
             }
         default:
             return state

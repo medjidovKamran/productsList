@@ -1,6 +1,6 @@
 import {notification} from "antd";
 
-export const openNotificationWithIcon = (type) => {
+export const openNotificationWithIcon = (type, message) => {
     if (type === 'error') {
         notification[type]({
             message: 'Error!',
@@ -14,6 +14,11 @@ export const openNotificationWithIcon = (type) => {
             message: 'Excellent!',
             description:
                 'Everything went well.',
+        });
+    }
+    if (type === 'warning') {
+        notification[type]({
+            message: message,
         });
     }
 };

@@ -20,20 +20,27 @@ const validateMessages = {
     },
 };
 
-const EditForm = ({editableItem, setEditableItem, setProducts}) => {
+const EditForm = ({editableItem, setEditableItem, setProducts, setIsOpen, products}) => {
 
 
     const onFinish = async (values) => {
         const {id} = editableItem;
+
         if (!!id) {
             const body = {id, ...values}
             await API.patch('/good', body);
         } else {
+            const isExist = products.find(item => item.name === values.name)
+            if (isExist) {
+                openNotificationWithIcon('warning', 'This name already exists!')
+                return
+            }
             await API.post('/good', values)
         }
         const fetched = await API.get('/goods');
         setProducts(fetched.data)
         setEditableItem({})
+        setIsOpen(false)
         openNotificationWithIcon('success')
     };
 
@@ -94,6 +101,7 @@ const EditForm = ({editableItem, setEditableItem, setProducts}) => {
 const mapStateToProps = state => {
     return {
         editableItem: state.editableItem,
+        products: state.products,
     }
 }
 

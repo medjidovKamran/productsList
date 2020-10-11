@@ -2,13 +2,16 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {Modal} from 'antd'
 import EditForm from "./EditForm";
-import {setIsOpen} from "../store/actions/actions";
+import {setEditable, setIsOpen} from "../store/actions/actions";
 
-const ModalWindow = ({isOpen, setIsOpen}) => {
+const ModalWindow = ({isOpen, setIsOpen, setIsEditable}) => {
 
     return (
         <Modal
-            onCancel={() => setIsOpen(false)}
+            onCancel={async() => {
+                await setIsOpen(false)
+                await setIsEditable({})
+            }}
             title="Basic Modal"
             visible={isOpen}
             footer={null}
@@ -25,7 +28,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        setIsOpen: (value) => dispatch(setIsOpen(value))
+        setIsOpen: (value) => dispatch(setIsOpen(value)),
+        setIsEditable: (item) => dispatch(setEditable(item)),
     }
 }
 

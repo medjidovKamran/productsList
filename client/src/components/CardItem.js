@@ -1,12 +1,12 @@
 import React from 'react';
 import {connect} from "react-redux";
-import {setEditable} from "../store/actions/actions";
+import {setEditable, setIsOpen} from "../store/actions/actions";
 import {Tag, Card, Col} from 'antd';
 import {EditOutlined, DeleteOutlined, DollarCircleOutlined} from '@ant-design/icons';
 
 const {Meta} = Card;
 
-const CardItem = ({card, removeHandler, setEditableItem}) => {
+const CardItem = ({card, removeHandler, setEditableItem, setIsOpen}) => {
 
     const layout = {
         lg: 8,
@@ -29,7 +29,10 @@ const CardItem = ({card, removeHandler, setEditableItem}) => {
                     </>
                 }
                 actions={[
-                    <EditOutlined onClick={() => setEditableItem(card)} key="edit"/>,
+                    <EditOutlined onClick={() => {
+                        setEditableItem(card)
+                        setIsOpen(true)
+                    }} key="edit"/>,
                     <DeleteOutlined onClick={() => removeHandler(card)} key="delete"/>
                 ]}
             >
@@ -47,7 +50,8 @@ const CardItem = ({card, removeHandler, setEditableItem}) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        setEditableItem: (item) => dispatch(setEditable(item))
+        setEditableItem: (item) => dispatch(setEditable(item)),
+        setIsOpen: (value) => dispatch(setIsOpen(value))
     }
 }
 
