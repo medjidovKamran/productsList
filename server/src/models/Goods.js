@@ -3,14 +3,14 @@ const sequelize = require("../database/connection");
 
 module.exports = sequelize.define("goods",{
     id: {
-        type: Sequelize.INTEGER(11),
+        type: Sequelize.INTEGER(),
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
     },
 
-    name: Sequelize.STRING(150),
-    description: Sequelize.STRING(400),
-    cost: Sequelize.INTEGER(),
+    name: Sequelize.STRING(),
+    description: Sequelize.STRING(),
+    cost: Sequelize.DOUBLE(),
     image: Sequelize.STRING(),
 })
