@@ -1,0 +1,28 @@
+.site-layout-content {
+  background: #fff;
+  padding: 24px;
+  min-height: 280px;
+  text-align: center;
+}
+
+.menu-logo {
+  max-width: 70px;
+  max-height: 50px;
+}
+
+.add-button {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.add-button span {
+  font-size: 30px;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+}
+
+.meta-info {
+  word-break: break-word;
+}
